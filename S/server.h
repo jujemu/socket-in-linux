@@ -12,7 +12,7 @@
 #define PORT 443
 #define SOCK_SIZE 10
 
-void bind_serv_sock(int serv_sock){
+void bind_serv_sock(int serv_sock) {
     struct sockaddr_in serv_addr;
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -33,9 +33,32 @@ int accept_and_create_client_sock(int serv_sock) {
     return client_sock;
 }
 
-int echo(int client_socks[], int client_sock, char* buf) {
+// int echo(int client_socks[], int client_sock, char* buf) {
+//     memset(buf, 0, BUF_SIZE);
+//     ssize_t read_return = read(client_sock, buf, BUF_SIZE);
+//     if (read_return <= 0) {
+//         printf("Closed client socket.\n");
+//         return -1;
+//     }
+
+//     // printf("[From socket %d] recv return value: %zd", client_sock, read_return);
+//     if (strcmp(buf, "!q") == 0)
+//         return -1;
+
+//     for (int i = 0; i < SOCK_SIZE; i++) {
+//         if (client_socks[i] == 0)
+//             break;
+        
+//         // if (client_sock != client_socks[i])
+//         write(client_socks[i], buf, BUF_SIZE);
+//     }
+    
+//     return 0;
+// }
+
+int echo(fd_set* read_fd, int curr_sock, char* buf, int fd_max, int serv_sock) {
     memset(buf, 0, BUF_SIZE);
-    ssize_t read_return = read(client_sock, buf, BUF_SIZE);
+    ssize_t read_return = read(curr_sock, buf, BUF_SIZE);
     if (read_return <= 0) {
         printf("Closed client socket.\n");
         return -1;
@@ -45,12 +68,9 @@ int echo(int client_socks[], int client_sock, char* buf) {
     if (strcmp(buf, "!q") == 0)
         return -1;
 
-    for (int i = 0; i < SOCK_SIZE; i++) {
-        if (client_socks[i] == 0)
-            break;
-        
-        // if (client_sock != client_socks[i])
-        write(client_socks[i], buf, BUF_SIZE);
+    for (int fd = 1; fd <= fd_max; fd++) {
+        if (FD_ISSET(fd, read_fd) && fd != curr_sock && fd != serv_sock)
+            write(fd, buf, BUF_SIZE);
     }
     
     return 0;
