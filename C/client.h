@@ -12,6 +12,11 @@
 #define PORT 443
 #define SERV_IP_ADDR "127.0.0.1"
 
+typedef struct read_sock_t {
+	int client_sock;
+	char* buf;
+} read_sock_t;
+
 void error_handle(char* msg) {
     printf("%s\n\n", msg);
     exit(-1);
@@ -30,10 +35,9 @@ int echo(int client_sock, char* send_msg_buf, char* recv_msg_buf) {
     if (fgets(send_msg_buf, BUF_SIZE, stdin) == NULL)
         error_handle("Error occurs when reading stdin buffer.\n\n");
 
-    if (send_msg_buf[0] == 0)
-        error_handle("Message buffer for writing is empty\n\n");
-
     // remove new line character
+    if (send_msg_buf[0] == 0) // check if char array is empty
+        error_handle("Message buffer for writing is empty\n\n");
     size_t ln = strlen(send_msg_buf) - 1;
     if (*send_msg_buf && send_msg_buf[ln] == '\n') 
         send_msg_buf[ln] = '\0';
@@ -43,4 +47,20 @@ int echo(int client_sock, char* send_msg_buf, char* recv_msg_buf) {
         return -1;
     
     return 0;
+}
+
+void *read_socket(void *param) {
+	read_sock_t* rs = (read_sock_t*) param;
+	while (1) {
+		ssize_t bytes_received = read(rs->client_sock, rs->buf, BUF_SIZE);
+		
+		if (bytes_received == 0)
+			error_handle("Server connection closed.");
+			
+		if (bytes_received < 0)
+			error_handle("[Error] Reading socket.");
+
+    	printf("%s\n", rs->buf);
+	}
+	return NULL;
 }
