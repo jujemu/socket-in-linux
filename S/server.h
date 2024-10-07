@@ -3,12 +3,14 @@
 #include <string.h>
 
 #include <unistd.h>
+#include <sys/select.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <arpa/inet.h>
 
 #define BUF_SIZE 256
 #define PORT 443
+#define SOCK_SIZE 10
 
 void bind_serv_sock(int serv_sock){
     struct sockaddr_in serv_addr;
@@ -31,17 +33,25 @@ int accept_and_create_client_sock(int serv_sock) {
     return client_sock;
 }
 
-int echo(int client_sock, char* buf) {
+int echo(int client_socks[], int client_sock, char* buf) {
+    memset(buf, 0, BUF_SIZE);
     ssize_t read_return = read(client_sock, buf, BUF_SIZE);
     if (read_return <= 0) {
-            printf("Closed client socket.\n");
-            return -1;
-        }
+        printf("Closed client socket.\n");
+        return -1;
+    }
 
-    printf("recv return value: %zd", read_return);
+    // printf("[From socket %d] recv return value: %zd", client_sock, read_return);
     if (strcmp(buf, "!q") == 0)
         return -1;
 
-    write(client_sock, buf, BUF_SIZE);
+    for (int i = 0; i < SOCK_SIZE; i++) {
+        if (client_socks[i] == 0)
+            break;
+        
+        // if (client_sock != client_socks[i])
+        write(client_socks[i], buf, BUF_SIZE);
+    }
+    
     return 0;
 }
