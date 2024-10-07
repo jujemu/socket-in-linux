@@ -6,9 +6,16 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 
+#include <pthread.h>
+
 #define BUF_SIZE 256
 #define PORT 443
 #define SERV_IP_ADDR "127.0.0.1"
+
+void error_handle(char* msg) {
+    printf("%s\n\n", msg);
+    exit(-1);
+}
 
 void connect_with_serv(int client_sock) {
     struct sockaddr_in serv_addr;
@@ -19,14 +26,21 @@ void connect_with_serv(int client_sock) {
 }
 
 int echo(int client_sock, char* send_msg_buf, char* recv_msg_buf) {
-    printf("%s", "> ");
-    fgets(send_msg_buf, BUF_SIZE, stdin);
-    send(client_sock, send_msg_buf, BUF_SIZE, 0);
+    memset(send_msg_buf, 0, BUF_SIZE);
+    if (fgets(send_msg_buf, BUF_SIZE, stdin) == NULL)
+        error_handle("Error occurs when reading stdin buffer.\n\n");
+
+    if (send_msg_buf[0] == 0)
+        error_handle("Message buffer for writing is empty\n\n");
+
+    // remove new line character
+    size_t ln = strlen(send_msg_buf) - 1;
+    if (*send_msg_buf && send_msg_buf[ln] == '\n') 
+        send_msg_buf[ln] = '\0';
+
+    write(client_sock, send_msg_buf, BUF_SIZE);
     if (strcmp(send_msg_buf, "!q") == 0)
         return -1;
-
-    recv(client_sock, recv_msg_buf, BUF_SIZE, 0);
-    printf("%s\n", recv_msg_buf);
-
+    
     return 0;
 }
