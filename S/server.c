@@ -20,7 +20,7 @@ int main(void)
 	listen(serv_sock, 10);
 	printf("Successfully bind and listening....\n");
 
-	// initialize file descriptors
+	// initialize file descriptors of sockets
 	fd_max = serv_sock;
 	FD_ZERO(&read_fd);
 	FD_SET(serv_sock, &read_fd);
@@ -28,7 +28,7 @@ int main(void)
 	ssl_init();
 	
 	while (1) {
-		// I/O multiplexing; select func
+		// I/O multiplexing; select function
 		tmp_read_fd = read_fd;
 		timeout.tv_sec = 5;
 		fd_num = select(fd_max + 1, &tmp_read_fd, NULL, NULL, &timeout);

@@ -9,9 +9,9 @@ int main(void)
 	SSL* ssl = NULL;
 
 	client_sock = socket(AF_INET, SOCK_STREAM, 0);
-
 	connect_with_serv(client_sock);
 
+	// create SSL and config
 	ssl_init();
 	ctx = create_ssl_ctx();
 	ssl_ctx_config(ctx);
@@ -27,6 +27,7 @@ int main(void)
 		error_handle("Failed to create thread.");
 	}
 
+	// echo client
 	while (1)
 		if (echo(&client, client_sock, stdin_read_buf, sock_read_buf) != 0)
 			break;

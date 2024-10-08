@@ -16,8 +16,6 @@
 #define SERV_IP_ADDR "127.0.0.1"
 #define CA_CERT_PATH "/root/projects/echo/C/rootca.crt"
 
-/* Obtain the return value of an SSL operation and convert into a simplified
- * error code, which is easier to examine for failure. */
 enum sslstatus 
 { 
     SSLSTATUS_OK, SSLSTATUS_WANT_IO, SSLSTATUS_FAIL 
@@ -66,6 +64,7 @@ void ssl_init() {
     ERR_load_crypto_strings();
 }
 
+/* 라이브러리가 core key를 관리하고 사용자가 접근할 수 있도록 context를 제공한다. */
 SSL_CTX* create_ssl_ctx()
 {
     const SSL_METHOD* method = TLS_method();
@@ -78,6 +77,7 @@ SSL_CTX* create_ssl_ctx()
     }
 }
 
+/* server.cert를 만들 때, 같이 넣어주었던 CA cert로 검증할 수 있도록 한다. */
 void ssl_ctx_config(SSL_CTX* ctx)
 {
     //Recommended to avoid SSLv2 & SSLv3
@@ -96,8 +96,10 @@ SSL* create_ssl(struct ssl_client* p,
     p->wbio = BIO_new(BIO_s_mem());
     p->ssl = SSL_new(ctx);
 
+    // server: SSL_set_accept_state || client: SSL_set_connect_state
     SSL_set_connect_state(p->ssl);
     SSL_set_bio(p->ssl, p->rbio, p->wbio);
+    // wrap the socket with SSL
     SSL_set_fd(client.ssl, sock);
     return p->ssl;
 }
@@ -192,7 +194,7 @@ int echo(struct ssl_client* client, int client_sock, char* send_msg_buf, char* r
 }
 
 void *read_socket(void *param) {
-	read_sock_t* rs = (struct ssl_client*) param;
+	read_sock_t* rs = (read_sock_t*) param;
 	while (1) {
 		ssize_t bytes_received = SSL_read(rs->client->ssl, rs->buf, BUF_SIZE);
 		

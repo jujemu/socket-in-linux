@@ -117,7 +117,8 @@ SSL* create_ssl(struct ssl_client* p,
 	p->wbio = BIO_new(BIO_s_mem());
 	p->ssl = SSL_new(ctx);
 
-	SSL_set_accept_state(p->ssl);
+	// server: SSL_set_accept_state || client: SSL_set_connect_state
+    SSL_set_accept_state(p->ssl);
 	SSL_set_bio(p->ssl, p->rbio, p->wbio);
 	//SSL_accept(p->ssl);
 	SSL_set_fd(p->ssl, client_sock);
