@@ -61,6 +61,7 @@
   "files.associations": {
     "client.h": "c",
     "pthread.h": "c",
-    "typeinfo": "c"
+    "typeinfo": "c",
+    "socket.h": "c"
   }
 }

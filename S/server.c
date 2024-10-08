@@ -10,6 +10,9 @@ int main(void)
 	int fd_max = 0, fd_num = 0;
 	int curr_sock = 0;
 	struct timeval timeout = { 0, };
+	SSL* ssl = NULL;
+	int top_client = 0;
+	ssl_client clients[SOCK_SIZE] = { 0, };
 
 	// bind and listen
 	serv_sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -21,6 +24,8 @@ int main(void)
 	fd_max = serv_sock;
 	FD_ZERO(&read_fd);
 	FD_SET(serv_sock, &read_fd);
+
+	ssl_init();
 	
 	while (1) {
 		// I/O multiplexing; select func
@@ -36,6 +41,8 @@ int main(void)
 				// connect with client
 				if (curr_sock == serv_sock) {
 					client_sock = accept_and_create_client_sock(serv_sock);
+					ssl = create_ssl(&clients[top], client_sock);
+					top++;
 
 					// update fd_max
 					if (fd_max < client_sock)
@@ -44,8 +51,10 @@ int main(void)
 					FD_SET(client_sock, &read_fd);
 				// communication with client
 				} else {
-					if (echo(&read_fd, curr_sock, sock_read_buf, fd_max, serv_sock) != 0){
-						// connection is closed(active close) or error occurs
+					if (echo(clients, &read_fd, curr_sock, sock_read_buf, fd_max, serv_sock, top) != 0){
+						/* 
+							connection is closed(active close) or error occurs 
+						*/
 						close(curr_sock);
 						FD_CLR(curr_sock, &read_fd);
 						printf("Closed with connection of socket %d\n\n", curr_sock);
