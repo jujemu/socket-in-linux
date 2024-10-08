@@ -148,7 +148,7 @@ int echo(
         return -1;
 
     if (strcmp(buf, "Succcessfully connected with client") == 0) {
-        printf("Succcessfully connected with client << socket %d >>", curr_sock);
+        printf("Succcessfully connected with client << socket %d >>\n", curr_sock);
         return 0;
     }
 
