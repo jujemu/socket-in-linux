@@ -33,6 +33,13 @@ int accept_and_create_client_sock(int serv_sock) {
     return client_sock;
 }
 
+void attach_noti(char* write_buf, char* buf, int sock)
+{
+	memset(write_buf, 0, BUF_SIZE);
+	snprintf(write_buf, BUF_SIZE, "[This is from socket %d] > ", (int)sock);
+	strcat(write_buf, buf);
+}
+
 int echo(fd_set* read_fd, int curr_sock, char* buf, int fd_max, int serv_sock) {
     memset(buf, 0, BUF_SIZE);
     ssize_t read_return = read(curr_sock, buf, BUF_SIZE);
@@ -45,9 +52,11 @@ int echo(fd_set* read_fd, int curr_sock, char* buf, int fd_max, int serv_sock) {
     if (strcmp(buf, "!q") == 0)
         return -1;
 
+    char write_buf[BUF_SIZE];
+    attach_noti(write_buf, buf, curr_sock);
     for (int fd = 1; fd <= fd_max; fd++) {
         if (FD_ISSET(fd, read_fd) && fd != curr_sock && fd != serv_sock)
-            write(fd, buf, BUF_SIZE);
+            write(fd, write_buf, BUF_SIZE);
     }
     
     return 0;
