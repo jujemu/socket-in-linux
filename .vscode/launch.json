@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": false,
-      "cwd": "/root/projects/echo/S",
-      "program": "/root/projects/echo/S/build/Debug/outDebug",
+      "cwd": "/root/projects/echo/C",
+      "program": "/root/projects/echo/C/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "/usr/bin/gdb",
       "setupCommands": [

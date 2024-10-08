@@ -146,6 +146,11 @@ int echo(
     if (strcmp(buf, "!q") == 0)
         return -1;
 
+    if (strcmp(buf, "Succcessfully connected with client") == 0) {
+        printf("Succcessfully connected with client << socket %d >>", curr_sock);
+        return 0;
+    }
+
     char write_buf[BUF_SIZE];
     ssize_t bytes_sended;
     attach_noti(write_buf, buf, curr_sock);
