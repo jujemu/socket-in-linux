@@ -14,7 +14,7 @@
 #define BUF_SIZE 256
 #define PORT 443
 #define SERV_IP_ADDR "127.0.0.1"
-#define CA_CERT_PATH "/root/projects/echo/C/rootca.crt"
+#define CA_CERT_PATH "/root/projects/echo/C/certificate/rootca.crt"
 
 enum sslstatus 
 { 

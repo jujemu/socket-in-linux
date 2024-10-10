@@ -62,6 +62,18 @@
     "client.h": "c",
     "pthread.h": "c",
     "typeinfo": "c",
-    "socket.h": "c"
-  }
+    "socket.h": "c",
+    "select.h": "c",
+    "string.h": "c",
+    "stdio.h": "c",
+    "stdlib.h": "c",
+    "types.h": "c",
+    "unistd.h": "c",
+    "inet.h": "c",
+    "err.h": "c",
+    "server_socket.h": "c",
+    "ssl.h": "c",
+    "server_tls.h": "c",
+    "server.h": "c"
+}
 }
