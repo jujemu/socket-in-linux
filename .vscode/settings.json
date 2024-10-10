@@ -74,6 +74,12 @@
     "server_socket.h": "c",
     "ssl.h": "c",
     "server_tls.h": "c",
-    "server.h": "c"
+    "server.h": "c",
+    "cstdlib": "c",
+    "client_tls.h": "c",
+    "client_socket.h": "c",
+    "error_handle.h": "c",
+    "error_handler.h": "c",
+    "buffer_config.h": "c"
 }
 }
