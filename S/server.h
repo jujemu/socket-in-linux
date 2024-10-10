@@ -1,6 +1,6 @@
 #include "server_tls.h"
 
-#define BUF_SIZE 1024
+#define BUF_SIZE 256
 #define SOCK_SIZE 10
 
 int echo(ssl_client* clients, fd_set* read_fd, int curr_sock, char* buf, int fd_max, int serv_sock, int top);
