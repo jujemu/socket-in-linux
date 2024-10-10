@@ -7,9 +7,11 @@
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
-                "${file}",
+                "client.c", "client_tls.c", "error_handler.c", "client_socket.c",
+                // "${file}",
                 "-o",
-                "${fileDirname}/${fileBasenameNoExtension}",
+                "client",
+                // "${fileDirname}/${fileBasenameNoExtension}",
                 "-lssl", "-lcrypto"
             ],
             "options": {

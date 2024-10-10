@@ -23,7 +23,7 @@ int accept_and_create_client_sock(int serv_sock)
     struct sockaddr_in client_addr;
     int size_client_addr = sizeof(client_addr);
     int client_sock = accept(serv_sock, (struct sockaddr*)&client_addr, &size_client_addr);
-    printf("Connected with client socket << %d >>\n\n", client_sock);
+    printf("Connected with client socket << %d >>\n", client_sock);
     
     return client_sock;
 }

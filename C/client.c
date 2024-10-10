@@ -15,7 +15,7 @@ int main(void)
     char sock_read_buf[BUF_SIZE] = { 0, };
     SSL_CTX* ctx = NULL;
     SSL* ssl = NULL;
-    ssl_client client;
+    ssl_client client = { 0, };
 
     client_sock = create_sock();
     connect_with_serv(client_sock);
@@ -26,7 +26,7 @@ int main(void)
     ssl_ctx_config(ctx);
     ssl = create_ssl(&client, ctx, client_sock);
 
-    do_ssl_handshake();
+    do_ssl_handshake(&client);
 
     // create thread for reading socket buffer
     pthread_t thread_1;

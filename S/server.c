@@ -27,7 +27,7 @@ int main(void)
     serv_sock = socket(AF_INET, SOCK_STREAM, 0);
     bind_serv_sock(serv_sock);
     listen(serv_sock, 10);
-    printf("Successfully bind and listening....\n");
+    printf("Successfully bind and listening....\n\n");
 
     // initialize file descriptors of sockets
     fd_max = serv_sock;
@@ -74,7 +74,7 @@ int main(void)
                     */
                     close(curr_sock);
                     FD_CLR(curr_sock, &read_fd);
-                    printf("Closed with connection of socket %d\n\n", curr_sock);
+                    printf("Closed with connection of socket << %d >>\n\n", curr_sock);
                     continue;
                 }
             }
@@ -108,7 +108,6 @@ int echo(
     ssize_t bytes_received = SSL_read(clients[index].ssl, buf, BUF_SIZE);
     if (bytes_received <= 0) 
     {
-        printf("Closed client socket.\n");
         return -1;
     }
 

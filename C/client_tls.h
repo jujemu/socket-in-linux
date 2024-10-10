@@ -40,6 +40,6 @@ void ssl_init();
 SSL_CTX* create_ssl_ctx();
 void ssl_ctx_config(SSL_CTX* ctx);
 SSL* create_ssl(struct ssl_client*, SSL_CTX* ctx, int sock);
-void print_ssl_state();
+void print_ssl_state(ssl_client* client);
 void queue_encrypted_bytes(struct ssl_client*, const char* buf, size_t len);
-enum sslstatus do_ssl_handshake();
+enum sslstatus do_ssl_handshake(ssl_client* client);

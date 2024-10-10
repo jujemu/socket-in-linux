@@ -1,7 +1,7 @@
 {
-  "C_Cpp_Runner.cCompilerPath": "/usr/bin/gcc",
-  "C_Cpp_Runner.cppCompilerPath": "/usr/bin/g++",
-  "C_Cpp_Runner.debuggerPath": "/usr/bin/gdb",
+  "C_Cpp_Runner.cCompilerPath": "gcc",
+  "C_Cpp_Runner.cppCompilerPath": "g++",
+  "C_Cpp_Runner.debuggerPath": "gdb",
   "C_Cpp_Runner.cStandard": "",
   "C_Cpp_Runner.cppStandard": "",
   "C_Cpp_Runner.msvcBatchPath": "",
@@ -37,9 +37,7 @@
   "C_Cpp_Runner.warningsAsError": false,
   "C_Cpp_Runner.compilerArgs": [],
   "C_Cpp_Runner.linkerArgs": [],
-  "C_Cpp_Runner.includePaths": [
-    "${workspaceFolder}/**"
-  ],
+  "C_Cpp_Runner.includePaths": [],
   "C_Cpp_Runner.includeSearch": [
     "*",
     "**/*"
@@ -59,27 +57,6 @@
   "C_Cpp_Runner.useLinkTimeOptimization": false,
   "C_Cpp_Runner.msvcSecureNoWarnings": false,
   "files.associations": {
-    "client.h": "c",
-    "pthread.h": "c",
-    "typeinfo": "c",
-    "socket.h": "c",
-    "select.h": "c",
-    "string.h": "c",
-    "stdio.h": "c",
-    "stdlib.h": "c",
-    "types.h": "c",
-    "unistd.h": "c",
-    "inet.h": "c",
-    "err.h": "c",
-    "server_socket.h": "c",
-    "ssl.h": "c",
-    "server_tls.h": "c",
-    "server.h": "c",
-    "cstdlib": "c",
-    "client_tls.h": "c",
-    "client_socket.h": "c",
-    "error_handle.h": "c",
-    "error_handler.h": "c",
-    "buffer_config.h": "c"
+    "ssl.h": "c"
   }
 }

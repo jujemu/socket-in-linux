@@ -11,8 +11,7 @@
       "cwd": "/root/projects/echo/C",
       "program": "/root/projects/echo/C/build/Debug/outDebug",
       "MIMode": "gdb",
-      "miDebuggerPath": "/usr/bin/gdb",
-      "preLaunchTask": "C/C++: gcc build active file",
+      "miDebuggerPath": "gdb",
       "setupCommands": [
         {
           "description": "Enable pretty-printing for gdb",
