@@ -69,9 +69,11 @@ int main(void)
                 // communication with client
                 else if (echo(clients, &read_fd, curr_sock, sock_read_buf, fd_max, serv_sock, top) != 0)
                 {
-                    /* 
-                        connection is closed(active close) or error occurs 
-                    */
+                    // connection is closed(active close) or error occurs 
+                    if (remove_client(clients, curr_sock, top)) {
+                        perror("Cannot find client to be removed.\n");
+                    }
+                    top--;
                     close(curr_sock);
                     FD_CLR(curr_sock, &read_fd);
                     printf("Closed with connection of socket << %d >>\n\n", curr_sock);
@@ -91,6 +93,23 @@ void attach_noti(char* write_buf, char* buf, int sock)
     memset(write_buf, 0, BUF_SIZE);
     snprintf(write_buf, BUF_SIZE, "[This is from socket %d] > ", (int)sock);
     strcat(write_buf, buf);
+}
+
+int remove_client(ssl_client* clients, int cli_fd, int top) 
+{
+    for (int i = 0; i <= top; i++)
+    {
+        if (clients[i].fd == cli_fd)
+        {
+            for (int j = i+1; j <= top; j++) {
+                clients[j-1] = clients[j];
+            }
+            memset(&clients[top], 0, sizeof(ssl_client));
+            return 1;
+        }
+    }
+
+    return 0;
 }
 
 int echo(
