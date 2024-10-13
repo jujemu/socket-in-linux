@@ -1,12 +1,10 @@
-#include <openssl/ssl.h>
-
 #define CA_CERT_PATH "/root/projects/echo/C/certificate/rootca.crt"
 
-#ifndef CLIENT_TLS_H
-#define CLIENT_TLS_H
+#ifndef SSL_CONNECTION_H
+#define SSL_CONNECTION_H
 enum sslstatus 
 { 
-    SSLSTATUS_OK, SSLSTATUS_WANT_IO, SSLSTATUS_FAIL 
+    SSLSTATUS_OK, SSLSTATUS_WANT_IO, SSLSTATUS_FAIL
 };
 
 typedef struct ssl_client

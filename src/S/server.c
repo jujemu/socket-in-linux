@@ -1,4 +1,4 @@
-#include "server.h"
+#include "config.h"
 #include "server_socket.h"
 #include "server_tls.h"
 #include <stdio.h>
@@ -8,6 +8,80 @@
 #include <sys/select.h>
 #include <arpa/inet.h>
 #include <openssl/ssl.h>
+
+void attach_noti(char* write_buf, char* buf, int sock)
+{
+    memset(write_buf, 0, BUF_SIZE);
+    snprintf(write_buf, BUF_SIZE, "[This is from socket %d] > ", (int)sock);
+    strcat(write_buf, buf);
+}
+
+int remove_client(ssl_client* clients, int cli_fd, int top) 
+{
+    for (int i = 0; i <= top; i++)
+    {
+        if (clients[i].fd == cli_fd)
+        {
+            for (int j = i+1; j <= top; j++) {
+                clients[j-1] = clients[j];
+            }
+            memset(&clients[top], 0, sizeof(ssl_client));
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+int echo(
+        ssl_client* clients,
+        fd_set* read_fd,
+        int curr_sock,
+        char* buf, 
+        int fd_max, 
+        int serv_sock,
+        int top) 
+{
+    int index = find_index_sock(clients, curr_sock, top);
+
+    memset(buf, 0, BUF_SIZE);
+    ssize_t bytes_received = SSL_read(clients[index].ssl, buf, BUF_SIZE);
+    if (bytes_received <= 0) 
+    {
+        return -1;
+    }
+
+    // printf("[From socket %d] recv return value: %zd", client_sock, read_return);
+    if (strcmp(buf, "!q") == 0) 
+    {
+        return -1;
+    }
+
+    if (strcmp(buf, "Succcessfully connected with client") == 0) 
+    {
+        printf("Succcessfully connected with client << socket %d >>\n", curr_sock);
+        return 0;
+    }
+
+    char write_buf[BUF_SIZE];
+    ssize_t bytes_sended;
+    attach_noti(write_buf, buf, curr_sock);
+    for (int fd = 1; fd <= fd_max; fd++) 
+    {
+        if (FD_ISSET(fd, read_fd) && fd != curr_sock && fd != serv_sock)
+        {
+            index = find_index_sock(clients, fd, top);
+            bytes_sended = SSL_write(clients[index].ssl, write_buf, BUF_SIZE);
+            if (bytes_sended <= 0) 
+            {
+                printf("Connection with client(socket %d) is closed.\n", fd);
+                continue;
+            }
+        }
+    }
+    
+    return 0;
+}
 
 int main(void)
 {
@@ -84,80 +158,6 @@ int main(void)
     }
 
     close(serv_sock);
-    
-    return 0;
-}
-
-void attach_noti(char* write_buf, char* buf, int sock)
-{
-    memset(write_buf, 0, BUF_SIZE);
-    snprintf(write_buf, BUF_SIZE, "[This is from socket %d] > ", (int)sock);
-    strcat(write_buf, buf);
-}
-
-int remove_client(ssl_client* clients, int cli_fd, int top) 
-{
-    for (int i = 0; i <= top; i++)
-    {
-        if (clients[i].fd == cli_fd)
-        {
-            for (int j = i+1; j <= top; j++) {
-                clients[j-1] = clients[j];
-            }
-            memset(&clients[top], 0, sizeof(ssl_client));
-            return 1;
-        }
-    }
-
-    return 0;
-}
-
-int echo(
-        ssl_client* clients,
-        fd_set* read_fd,
-        int curr_sock,
-        char* buf, 
-        int fd_max, 
-        int serv_sock,
-        int top) 
-{
-    int index = find_index_sock(clients, curr_sock, top);
-
-    memset(buf, 0, BUF_SIZE);
-    ssize_t bytes_received = SSL_read(clients[index].ssl, buf, BUF_SIZE);
-    if (bytes_received <= 0) 
-    {
-        return -1;
-    }
-
-    // printf("[From socket %d] recv return value: %zd", client_sock, read_return);
-    if (strcmp(buf, "!q") == 0) 
-    {
-        return -1;
-    }
-
-    if (strcmp(buf, "Succcessfully connected with client") == 0) 
-    {
-        printf("Succcessfully connected with client << socket %d >>\n", curr_sock);
-        return 0;
-    }
-
-    char write_buf[BUF_SIZE];
-    ssize_t bytes_sended;
-    attach_noti(write_buf, buf, curr_sock);
-    for (int fd = 1; fd <= fd_max; fd++) 
-    {
-        if (FD_ISSET(fd, read_fd) && fd != curr_sock && fd != serv_sock)
-        {
-            index = find_index_sock(clients, fd, top);
-            bytes_sended = SSL_write(clients[index].ssl, write_buf, BUF_SIZE);
-            if (bytes_sended <= 0) 
-            {
-                printf("Connection with client(socket %d) is closed.\n", fd);
-                continue;
-            }
-        }
-    }
     
     return 0;
 }
