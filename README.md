@@ -7,8 +7,8 @@ Echo server and client with TLS.
 ./build.sh
 
 # server
-./server
+./build/server
 
 # client
-./client
+./build/client
 ```

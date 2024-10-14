@@ -5,7 +5,7 @@
 #include <pthread.h>
 #include "client_socket.h"
 #include "client_tls.h"
-#include "buffer_config.h"
+#include "config.h"
 #include "error_handler.h"
 
 int echo(ssl_client* client, int client_sock, char* send_msg_buf, char* recv_msg_buf) 

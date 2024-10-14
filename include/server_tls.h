@@ -1,7 +1,7 @@
 #include <openssl/ssl.h>
 
-#define CERTIFICATE_PATH "/root/projects/echo/S/certificate/server.crt"
-#define KEY_PATH "/root/projects/echo/S/certificate/server.key"
+#define CERTIFICATE_PATH "/root/projects/echo/src/S/certificate/server.crt"
+#define KEY_PATH "/root/projects/echo/src/S/certificate/server.key"
 
 #ifndef SERVER_TLS_H
 #define SERVER_TLS_H
@@ -30,6 +30,6 @@ typedef struct ssl_client
 } ssl_client;
 #endif
 
-void ssl_init();
+void server_ssl_init();
 int find_index_sock(ssl_client* clients, int sock, int top);
-SSL* create_ssl(struct ssl_client* p, int client_sock);
+SSL* server_create_ssl(struct ssl_client* p, int client_sock);

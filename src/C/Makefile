@@ -1,13 +1,14 @@
 CC = gcc
 TARGET = client
 
-OBJS = client.o client_tls.o client_socket.o error_handler.o
-LINK = -lssl -lcrypto
+SRC = client.c
+
+HDIR = /root/projects/echo/include/
+IHDIR = -I$(HDIR)
+LIBNAME = echo
+LDFLAGS = -lssl -lcrypto -l$(LIBNAME)
 
 all : $(TARGET)
 
-$(TARGET) : $(OBJS)
-	$(CC) -o $@ $^ $(LINK)
-
-%o : %c
-	$(CC) -c $< -o $@
+$(TARGET) : $(SRC)
+	$(CC) -o $@ $^ $(LDFLAGS) $(IHDIR)

@@ -26,11 +26,11 @@ int remove_client(ssl_client* clients, int cli_fd, int top)
                 clients[j-1] = clients[j];
             }
             memset(&clients[top], 0, sizeof(ssl_client));
-            return 1;
+            return 0;
         }
     }
 
-    return 0;
+    return 1;
 }
 
 int echo(
@@ -108,7 +108,7 @@ int main(void)
     FD_ZERO(&read_fd);
     FD_SET(serv_sock, &read_fd);
 
-    ssl_init();
+    server_ssl_init();
     
     while (1) 
     {
@@ -130,7 +130,7 @@ int main(void)
                 if (curr_sock == serv_sock) 
                 {
                     client_sock = accept_and_create_client_sock(serv_sock);
-                    ssl = create_ssl(&clients[top], client_sock);
+                    ssl = server_create_ssl(&clients[top], client_sock);
                     top++;
                     FD_SET(client_sock, &read_fd);
 
