@@ -150,7 +150,7 @@ int main(void)
                     top--;
                     close(curr_sock);
                     FD_CLR(curr_sock, &read_fd);
-                    printf("Closed with connection of socket << %d >>\n\n", curr_sock);
+                    printf("\nClosed with connection of socket << %d >>\n\n", curr_sock);
                     continue;
                 }
             }
