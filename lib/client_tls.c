@@ -1,8 +1,8 @@
-#include "client_tls.h"
-#include "buffer_config.h"
 #include <openssl/ssl.h>
 #include <openssl/err.h>
 #include <openssl/bio.h>
+#include "client_tls.h"
+#include "config.h"
 
 void ssl_init()
 {

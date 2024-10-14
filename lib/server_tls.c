@@ -5,7 +5,7 @@
 
 SSL_CTX* ctx;
 
-void ssl_init() 
+void server_ssl_init() 
 {
     SSL_library_init();
     SSL_load_error_strings();
@@ -43,7 +43,7 @@ int find_index_sock(ssl_client* clients, int sock, int top)
     return -1;
 }
 
-SSL* create_ssl(struct ssl_client* p, int client_sock)
+SSL* server_create_ssl(struct ssl_client* p, int client_sock)
 {
     memset(p, 0, sizeof(struct ssl_client));
 

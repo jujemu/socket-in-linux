@@ -1,12 +1,40 @@
-#include "client.h"
-#include "client_socket.h"
-#include "client_tls.h"
-#include "buffer_config.h"
-#include "error_handler.h"
+#include <openssl/ssl.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include "client_socket.h"
+#include "client_tls.h"
+#include "config.h"
+#include "error_handler.h"
+
+int echo(ssl_client* client, int client_sock, char* send_msg_buf, char* recv_msg_buf) 
+{
+    memset(send_msg_buf, 0, BUF_SIZE);
+    if (fgets(send_msg_buf, BUF_SIZE, stdin) == NULL)
+    {
+        error_handle("Error occurs when reading stdin buffer.\n\n");
+    }
+
+    // remove new line character
+    if (send_msg_buf[0] == 0) // check if char array is empty
+    {
+        error_handle("Message buffer for writing is empty\n\n");
+    }
+    size_t ln = strlen(send_msg_buf) - 1;
+    if (*send_msg_buf && send_msg_buf[ln] == '\n') 
+    {
+        send_msg_buf[ln] = '\0';
+    }
+
+    SSL_write(client->ssl, send_msg_buf, BUF_SIZE);
+    if (strcmp(send_msg_buf, "!q") == 0)
+    {
+        return -1;
+    }
+
+    return 0;
+}
 
 int main(void)
 {
@@ -47,34 +75,6 @@ int main(void)
     }
 
     close(client_sock);
-
-    return 0;
-}
-
-int echo(ssl_client* client, int client_sock, char* send_msg_buf, char* recv_msg_buf) 
-{
-    memset(send_msg_buf, 0, BUF_SIZE);
-    if (fgets(send_msg_buf, BUF_SIZE, stdin) == NULL)
-    {
-        error_handle("Error occurs when reading stdin buffer.\n\n");
-    }
-
-    // remove new line character
-    if (send_msg_buf[0] == 0) // check if char array is empty
-    {
-        error_handle("Message buffer for writing is empty\n\n");
-    }
-    size_t ln = strlen(send_msg_buf) - 1;
-    if (*send_msg_buf && send_msg_buf[ln] == '\n') 
-    {
-        send_msg_buf[ln] = '\0';
-    }
-
-    SSL_write(client->ssl, send_msg_buf, BUF_SIZE);
-    if (strcmp(send_msg_buf, "!q") == 0)
-    {
-        return -1;
-    }
 
     return 0;
 }

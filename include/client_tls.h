@@ -1,13 +1,16 @@
-#include <openssl/ssl.h>
+#define CA_CERT_PATH "/root/projects/echo/C/certificate/rootca.crt"
 
-#define CERTIFICATE_PATH "/root/projects/echo/S/certificate/server.crt"
-#define KEY_PATH "/root/projects/echo/S/certificate/server.key"
+#ifndef SSL_CONNECTION_H
+#define SSL_CONNECTION_H
+enum sslstatus 
+{ 
+    SSLSTATUS_OK, SSLSTATUS_WANT_IO, SSLSTATUS_FAIL
+};
 
-#ifndef SERVER_TLS_H
-#define SERVER_TLS_H
 typedef struct ssl_client
 {
     int fd;
+
     SSL* ssl;
     BIO* rbio; /* SSL reads from, we write to. */
     BIO* wbio; /* SSL writes to, we read from. */
@@ -30,6 +33,11 @@ typedef struct ssl_client
 } ssl_client;
 #endif
 
+static enum sslstatus get_sslstatus(SSL* ssl, int n);
 void ssl_init();
-int find_index_sock(ssl_client* clients, int sock, int top);
-SSL* create_ssl(struct ssl_client* p, int client_sock);
+SSL_CTX* create_ssl_ctx();
+void ssl_ctx_config(SSL_CTX* ctx);
+SSL* create_ssl(struct ssl_client*, SSL_CTX* ctx, int sock);
+void print_ssl_state(ssl_client* client);
+void queue_encrypted_bytes(struct ssl_client*, const char* buf, size_t len);
+enum sslstatus do_ssl_handshake(ssl_client* client);

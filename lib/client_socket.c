@@ -1,8 +1,10 @@
+#include <openssl/ssl.h>
+#include <arpa/inet.h>
+#include <stdlib.h>
+#include "config.h"
+#include "error_handler.h"
 #include "client_socket.h"
 #include "client_tls.h"
-#include "buffer_config.h"
-#include "error_handler.h"
-#include <arpa/inet.h>
 
 int create_sock()
 {
@@ -40,5 +42,6 @@ void *read_socket(void *param)
 
         printf("%s\n", rs->buf);
     }
+    
     return NULL;
 }

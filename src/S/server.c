@@ -1,4 +1,4 @@
-#include "server.h"
+#include "config.h"
 #include "server_socket.h"
 #include "server_tls.h"
 #include <stdio.h>
@@ -8,85 +8,6 @@
 #include <sys/select.h>
 #include <arpa/inet.h>
 #include <openssl/ssl.h>
-
-int main(void)
-{
-    int serv_sock = 0;
-    int client_sock = 0;
-    int top = 0;
-    char sock_read_buf[BUF_SIZE] = { 0, };
-    fd_set read_fd = { 0, }, tmp_read_fd = { 0, };
-    int fd_max = 0, fd_num = 0;
-    int curr_sock = 0;
-    struct timeval timeout = { 0, };
-    SSL* ssl = NULL;
-    int top_client = 0;
-    ssl_client clients[SOCK_SIZE] = { 0, };
-
-    // bind and listen
-    serv_sock = socket(AF_INET, SOCK_STREAM, 0);
-    bind_serv_sock(serv_sock);
-    listen(serv_sock, 10);
-    printf("Successfully bind and listening....\n\n");
-
-    // initialize file descriptors of sockets
-    fd_max = serv_sock;
-    FD_ZERO(&read_fd);
-    FD_SET(serv_sock, &read_fd);
-
-    ssl_init();
-    
-    while (1) 
-    {
-        // I/O multiplexing; select function
-        tmp_read_fd = read_fd;
-        timeout.tv_sec = 5;
-        fd_num = select(fd_max + 1, &tmp_read_fd, NULL, NULL, &timeout);
-        if (fd_num <= 0) 
-        {
-            continue;
-        }
-        
-        for (int i = 1; i <= fd_max; i++) 
-        {
-            curr_sock = i;
-            if (FD_ISSET(curr_sock, &tmp_read_fd)) 
-            {
-                // connect with client
-                if (curr_sock == serv_sock) 
-                {
-                    client_sock = accept_and_create_client_sock(serv_sock);
-                    ssl = create_ssl(&clients[top], client_sock);
-                    top++;
-                    FD_SET(client_sock, &read_fd);
-
-                    // update fd_max
-                    if (fd_max < client_sock)
-                    {
-                        fd_max = client_sock;
-                    }
-                } 
-                // communication with client
-                else if (echo(clients, &read_fd, curr_sock, sock_read_buf, fd_max, serv_sock, top) != 0)
-                {
-                    // connection is closed(active close) or error occurs 
-                    if (remove_client(clients, curr_sock, top)) {
-                        perror("Cannot find client to be removed.\n");
-                    }
-                    top--;
-                    close(curr_sock);
-                    FD_CLR(curr_sock, &read_fd);
-                    printf("Closed with connection of socket << %d >>\n\n", curr_sock);
-                    continue;
-                }
-            }
-        }
-    }
-
-    close(serv_sock);
-    
-    return 0;
-}
 
 void attach_noti(char* write_buf, char* buf, int sock)
 {
@@ -105,11 +26,11 @@ int remove_client(ssl_client* clients, int cli_fd, int top)
                 clients[j-1] = clients[j];
             }
             memset(&clients[top], 0, sizeof(ssl_client));
-            return 1;
+            return 0;
         }
     }
 
-    return 0;
+    return 1;
 }
 
 int echo(
@@ -158,6 +79,85 @@ int echo(
             }
         }
     }
+    
+    return 0;
+}
+
+int main(void)
+{
+    int serv_sock = 0;
+    int client_sock = 0;
+    int top = 0;
+    char sock_read_buf[BUF_SIZE] = { 0, };
+    fd_set read_fd = { 0, }, tmp_read_fd = { 0, };
+    int fd_max = 0, fd_num = 0;
+    int curr_sock = 0;
+    struct timeval timeout = { 0, };
+    SSL* ssl = NULL;
+    int top_client = 0;
+    ssl_client clients[SOCK_SIZE] = { 0, };
+
+    // bind and listen
+    serv_sock = socket(AF_INET, SOCK_STREAM, 0);
+    bind_serv_sock(serv_sock);
+    listen(serv_sock, 10);
+    printf("Successfully bind and listening....\n\n");
+
+    // initialize file descriptors of sockets
+    fd_max = serv_sock;
+    FD_ZERO(&read_fd);
+    FD_SET(serv_sock, &read_fd);
+
+    server_ssl_init();
+    
+    while (1) 
+    {
+        // I/O multiplexing; select function
+        tmp_read_fd = read_fd;
+        timeout.tv_sec = 5;
+        fd_num = select(fd_max + 1, &tmp_read_fd, NULL, NULL, &timeout);
+        if (fd_num <= 0) 
+        {
+            continue;
+        }
+        
+        for (int i = 1; i <= fd_max; i++) 
+        {
+            curr_sock = i;
+            if (FD_ISSET(curr_sock, &tmp_read_fd)) 
+            {
+                // connect with client
+                if (curr_sock == serv_sock) 
+                {
+                    client_sock = accept_and_create_client_sock(serv_sock);
+                    ssl = server_create_ssl(&clients[top], client_sock);
+                    top++;
+                    FD_SET(client_sock, &read_fd);
+
+                    // update fd_max
+                    if (fd_max < client_sock)
+                    {
+                        fd_max = client_sock;
+                    }
+                } 
+                // communication with client
+                else if (echo(clients, &read_fd, curr_sock, sock_read_buf, fd_max, serv_sock, top) != 0)
+                {
+                    // connection is closed(active close) or error occurs 
+                    if (remove_client(clients, curr_sock, top)) {
+                        perror("Cannot find client to be removed.\n");
+                    }
+                    top--;
+                    close(curr_sock);
+                    FD_CLR(curr_sock, &read_fd);
+                    printf("Closed with connection of socket << %d >>\n\n", curr_sock);
+                    continue;
+                }
+            }
+        }
+    }
+
+    close(serv_sock);
     
     return 0;
 }
