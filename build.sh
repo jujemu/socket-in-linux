@@ -19,6 +19,3 @@ cd ./src/C
 make
 mv ./client ../../build
 cd ../..
-
-# LD_LIBRARY_PATH update
-export LD_LIBRARY_PATH=/usr/lib64:$LD_LIBRARY_PATH
