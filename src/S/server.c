@@ -1,6 +1,3 @@
-#include "config.h"
-#include "server_socket.h"
-#include "server_tls.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -8,6 +5,9 @@
 #include <sys/select.h>
 #include <arpa/inet.h>
 #include <openssl/ssl.h>
+#include "server_socket.h"
+#include "server_tls.h"
+#include "config.h"
 
 void attach_noti(char* write_buf, char* buf, int sock)
 {
