@@ -1,7 +1,7 @@
-# socket programming in linux
+# Socket programming in linux
 Echo server and client with TLS.
 
-## ENV
+## Prerequisite
 ```
 apt update && apt install libssl-dev build-essential
 ```
