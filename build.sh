@@ -1,12 +1,11 @@
 #!/bin/bash
-apt update && Y || apt install libssl-dev build-essential
 mkdir -p build
 
 # shared library
 cd /root/projects/echo/
 cd ./lib/
 make
-mv libecho.so /usr/lib64
+mv libecho.so /usr/lib
 make clean
 
 # server
