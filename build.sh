@@ -1,6 +1,5 @@
 #!/bin/bash
-source ./server.sh
-source ./client.sh
+mkdir -p build include lib
 
 # shared library
 cd /root/projects/echo/
