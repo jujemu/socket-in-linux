@@ -1,5 +1,5 @@
 #!/bin/bash
-mkdir -p build include lib
+mkdir -p build
 
 # shared library
 cd /root/projects/echo/
