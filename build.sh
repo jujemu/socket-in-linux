@@ -1,5 +1,5 @@
 #!/bin/bash
-apt update && apt install libssl-dev build-essential
+apt update && Y || apt install libssl-dev build-essential
 mkdir -p build
 
 # shared library
