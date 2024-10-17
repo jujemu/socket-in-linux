@@ -12,6 +12,7 @@
 int send_to_serv(SSL* ssl, char* send_msg_buf) {
     memset(send_msg_buf, 0, BUF_SIZE);
     if (fgets(send_msg_buf, BUF_SIZE, stdin) == NULL) {
+        show_last_error_msg();
         error_handle("Error occurs when reading stdin buffer.\n\n");
     }
 
@@ -46,7 +47,7 @@ int main(void) {
     client_sock = create_tcp_sock();
     connect_with_serv(client_sock, port, ip_addr);
 
-    // ssl_context config and create ssl
+    /* ssl_context config and create ssl */
     ssl_init();
     ctx = create_ssl_ctx();
     ssl_ctx_config(ctx, ca_cert_path);
@@ -54,7 +55,7 @@ int main(void) {
 
     do_ssl_handshake(ssl);
 
-    // create thread for reading socket
+    /* create thread for reading socket */
     pthread_t thread_1;
     if (pthread_create(&thread_1, NULL, read_sock_t, (void*)ssl) != 0) {
         close(client_sock);

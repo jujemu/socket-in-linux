@@ -1,14 +1,12 @@
 CC = gcc
-TARGET = client_app
+EXECUTABLE = client_app
 
 SRC = client.c
 
-HDIR = ../../Library/include/
-IHDIR = -I$(HDIR)
 LIBNAME = socket_tls
-LDFLAGS = -lssl -lcrypto -l$(LIBNAME)
+LDDIR = ../../build
+HDIR = ../../Library/include/
+LDFLAGS = -lssl -lcrypto -l$(LIBNAME) -L$(LDDIR) -I$(HDIR)
 
-all : $(TARGET)
-
-$(TARGET) : $(SRC)
-	$(CC) -o $@ $^ $(LDFLAGS) $(IHDIR) -L../../build
+$(EXECUTABLE) : $(SRC)
+	$(CC) -o $@ $^ $(LDFLAGS) $(IHDIR)
