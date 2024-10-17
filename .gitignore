@@ -1,5 +1,5 @@
 *.o
-client
-server
+client_app
+server_app
 .vscode
 *.so

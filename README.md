@@ -12,8 +12,8 @@ apt update && apt install libssl-dev build-essential
 source ./build.sh
 
 # server
-./build/server
+./build/server_app [PORT] # Ex> ./build/server_app 443
 
 # client
-./build/client
+./build/client_app [IP address] [PORT] # Ex> ./build/client_app 127.0.0.1 443
 ```

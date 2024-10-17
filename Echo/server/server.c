@@ -16,6 +16,11 @@ void attach_noti(char* write_buf, char* buf, int sock)
     strcat(write_buf, buf);
 }
 
+void error_handle(char* msg) {
+    printf("%s\n\n", msg);
+    exit(-1);
+}
+
 int remove_client(ssl_client* clients, int cli_fd, int top) 
 {
     for (int i = 0; i <= top; i++)
@@ -52,13 +57,11 @@ int echo(
     }
 
     // printf("[From socket %d] recv return value: %zd", client_sock, read_return);
-    if (strcmp(buf, "!q") == 0) 
-    {
+    if (strcmp(buf, "!q") == 0) {
         return -1;
     }
 
-    if (strcmp(buf, "Succcessfully connected with client") == 0) 
-    {
+    if (strcmp(buf, "Succcessfully connected with client") == 0) {
         printf("Succcessfully connected with client << socket %d >>\n", curr_sock);
         return 0;
     }
@@ -83,10 +86,11 @@ int echo(
     return 0;
 }
 
-int main(void)
+int main(int argc, char *argv[])
 {
     int serv_sock = 0;
     int client_sock = 0;
+    int port = 0;
     int top = 0;
     char sock_read_buf[BUF_SIZE] = { 0, };
     fd_set read_fd = { 0, }, tmp_read_fd = { 0, };
@@ -97,9 +101,18 @@ int main(void)
     int top_client = 0;
     ssl_client clients[SOCK_SIZE] = { 0, };
 
+    // copy argument into port number
+    if (argc != 2) {
+        error_handle("Give me one port number.");
+    }
+    if (strlen(argv[1]) >= PORT_LEN) {
+        error_handle("Invalid port number. It should be under 65535.");
+    }
+    port = atoi(argv[1]);
+
     // bind and listen
     serv_sock = socket(AF_INET, SOCK_STREAM, 0);
-    bind_serv_sock(serv_sock);
+    bind_serv_sock(serv_sock, port);
     listen(serv_sock, 10);
     printf("Successfully bind and listening....\n\n");
 
@@ -135,8 +148,7 @@ int main(void)
                     FD_SET(client_sock, &read_fd);
 
                     // update fd_max
-                    if (fd_max < client_sock)
-                    {
+                    if (fd_max < client_sock) {
                         fd_max = client_sock;
                     }
                 } 
@@ -150,7 +162,7 @@ int main(void)
                     top--;
                     close(curr_sock);
                     FD_CLR(curr_sock, &read_fd);
-                    printf("\nClosed with connection of socket << %d >>\n\n", curr_sock);
+                    printf("Closed with connection of socket << %d >>\n", curr_sock);
                     continue;
                 }
             }

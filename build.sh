@@ -1,21 +1,24 @@
 #!/bin/bash
+
 mkdir -p build
 
 # shared library
-cd /root/projects/echo/
-cd ./lib/
+cd Library/
 make
-mv libecho.so /usr/lib
+cp libsocket_tls.so ../build/
 make clean
+cd ..
 
 # server
-cd ../src/S
+cd Echo/server
 make
-mv ./server ../../build
+rm ../../build/server_app
+mv ./server_app ../../build
 cd ../..
 
 # client
-cd ./src/C
+cd Echo/client
 make
-mv ./client ../../build
+rm ../../build/client_app
+mv ./client_app ../../build
 cd ../..

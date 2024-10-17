@@ -80,6 +80,7 @@
     "client_socket.h": "c",
     "error_handle.h": "c",
     "error_handler.h": "c",
-    "buffer_config.h": "c"
+    "buffer_config.h": "c",
+    "config.h": "c"
   }
 }

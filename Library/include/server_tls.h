@@ -1,7 +1,7 @@
 #include <openssl/ssl.h>
 
-#define CERTIFICATE_PATH "/root/projects/echo/src/S/certificate/server.crt"
-#define KEY_PATH "/root/projects/echo/src/S/certificate/server.key"
+#define CERTIFICATE_PATH "./certificate/server.crt"
+#define KEY_PATH "./certificate/server.key"
 
 #ifndef SERVER_TLS_H
 #define SERVER_TLS_H
