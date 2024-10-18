@@ -1,3 +1,4 @@
+#define __USE_GNU
 #include <openssl/ssl.h>
 #include <pthread.h>
 #include <stdio.h>
@@ -33,12 +34,26 @@ int send_to_serv(SSL* ssl, char* send_msg_buf) {
     return 0;
 }
 
+/* if thread suddenly died, check the status of thread return. */
+void check_thread_status(pthread_t* thread_1, void* thread_rtn) {
+    pthread_tryjoin_np(*thread_1, &thread_rtn); // non-blocking pthread_join
+    if (thread_rtn) {
+        if (SERVER_CLOSED == *(enum thread_error_code*)thread_rtn) {
+            error_handle("Server connection closed.");
+        } else if (FAIL_TO_READ == *(enum thread_error_code*)thread_rtn) {
+            show_last_error_msg();
+            error_handle("Error occurs when reading socket.");
+        }
+    }
+}
+
 int main(void) {
     int client_sock = 0;
     SSL_CTX* ctx = NULL;
     SSL* ssl = NULL;
     char stdin_read_buf[BUF_SIZE] = { 0, };
     char sock_read_buf[BUF_SIZE] = { 0, };
+    void* thread_rtn = NULL;
 
     int port = 443;
     char ip_addr[BUF_SIZE] = { "localhost" };
@@ -62,11 +77,13 @@ int main(void) {
         error_handle("Failed to create thread.");
     }
 
-    // send message to server
+    /* send message to server */
     while (1) {
         if (send_to_serv(ssl, stdin_read_buf) != 0) {
             break;
         }
+
+        check_thread_status(&thread_1, thread_rtn);
     }
 
     close(client_sock);

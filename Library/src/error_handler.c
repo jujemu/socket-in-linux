@@ -1,3 +1,4 @@
+#include <openssl/err.h>
 #include <stdio.h>
 #include <stdlib.h>
 

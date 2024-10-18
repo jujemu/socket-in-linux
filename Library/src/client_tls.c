@@ -84,17 +84,19 @@ void *read_sock_t(void* param) {
     SSL* ssl = (SSL*) param;
     char stdin_read_buf[BUF_SIZE] = { 0, };
     ssize_t bytes_received = 0;
+    enum thread_error_code *ret_val = malloc(sizeof(enum thread_error_code));
     
     while (1) {
         bytes_received = SSL_read(ssl, stdin_read_buf, BUF_SIZE);
         
         if (bytes_received == 0) {
-            error_handle("Server connection closed.");
+            *ret_val = SERVER_CLOSED;
+            return (void*) ret_val;
         }
 
         if (bytes_received < 0) {
-            show_last_error_msg();
-            error_handle("Error occurs when reading socket.");
+            *ret_val = FAIL_TO_READ;
+            return (void*) ret_val;
         }
 
         printf("%s\n", stdin_read_buf);
