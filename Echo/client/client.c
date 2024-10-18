@@ -1,4 +1,4 @@
-#define __USE_GNU
+#define __USE_GNU // needed to include pthread_tryjoin_np
 #include <openssl/ssl.h>
 #include <pthread.h>
 #include <stdio.h>
