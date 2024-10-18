@@ -1,10 +1,11 @@
+#include <arpa/inet.h>
+#include <openssl/ssl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 #include <sys/select.h>
-#include <arpa/inet.h>
-#include <openssl/ssl.h>
+#include <unistd.h>
+
 #include "server_socket.h"
 #include "server_tls.h"
 #include "config.h"
@@ -86,11 +87,10 @@ int echo(
     return 0;
 }
 
-int main(int argc, char *argv[])
+int main(void)
 {
     int serv_sock = 0;
     int client_sock = 0;
-    int port = 0;
     int top = 0;
     char sock_read_buf[BUF_SIZE] = { 0, };
     fd_set read_fd = { 0, }, tmp_read_fd = { 0, };
@@ -101,14 +101,10 @@ int main(int argc, char *argv[])
     int top_client = 0;
     ssl_client clients[SOCK_SIZE] = { 0, };
 
-    // copy argument into port number
-    if (argc != 2) {
-        error_handle("Give me one port number.");
-    }
-    if (strlen(argv[1]) >= PORT_LEN) {
-        error_handle("Invalid port number. It should be under 65535.");
-    }
-    port = atoi(argv[1]);
+    /* configure information of binding port and certificate path. */
+    int port = 443;
+    char certificate_path[BUF_SIZE] = { "./certificate/server.crt" };
+    char key_path[BUF_SIZE] = { "./certificate/server.key" };
 
     // bind and listen
     serv_sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -121,7 +117,7 @@ int main(int argc, char *argv[])
     FD_ZERO(&read_fd);
     FD_SET(serv_sock, &read_fd);
 
-    server_ssl_init();
+    server_ssl_init(certificate_path, key_path);
     
     while (1) 
     {
@@ -129,13 +125,11 @@ int main(int argc, char *argv[])
         tmp_read_fd = read_fd;
         timeout.tv_sec = 5;
         fd_num = select(fd_max + 1, &tmp_read_fd, NULL, NULL, &timeout);
-        if (fd_num <= 0) 
-        {
+        if (fd_num <= 0) {
             continue;
         }
         
-        for (int i = 1; i <= fd_max; i++) 
-        {
+        for (int i = 1; i <= fd_max; i++) {
             curr_sock = i;
             if (FD_ISSET(curr_sock, &tmp_read_fd)) 
             {
