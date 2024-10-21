@@ -1,14 +1,8 @@
-#include "client_socket.h"
-
 #include <arpa/inet.h>
 #include <stdlib.h>
 #include <openssl/ssl.h>
 
 #include "error_handler.h"
-
-int create_tcp_sock() {
-    return socket(AF_INET, SOCK_STREAM, 0);
-}
 
 void connect_with_serv(int client_sock, int port, char *serv_ip_addr) {
     if (port <= 0 && 65535 <= port) {

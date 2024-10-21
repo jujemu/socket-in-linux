@@ -3,3 +3,5 @@ client_app
 server_app
 .vscode
 *.so
+
+_build

@@ -2,19 +2,17 @@
 #include <openssl/err.h>
 #include <openssl/ssl.h>
 
-#include "client_tls.h"
-#include "config.h"
 #include "error_handler.h"
 
-void ssl_init() {
-    SSL_library_init();
-    OpenSSL_add_all_algorithms();
-    SSL_load_error_strings();
-    ERR_load_crypto_strings();
-}
+#define BUF_SIZE 256
+
+enum thread_error_code {
+    SERVER_CLOSED = -1,
+    FAIL_TO_READ = -2
+};
 
 /* Library manage the core key of crypto, and give user a context that can access the core key. */
-SSL_CTX* create_ssl_ctx() {
+SSL_CTX* create_client_ssl_ctx(char* ca_cert_path) {
     const SSL_METHOD* method = TLS_method();
     SSL_CTX* ctx = SSL_CTX_new(method);
     if (!ctx) {
@@ -22,20 +20,18 @@ SSL_CTX* create_ssl_ctx() {
         error_handle("Error occurs when creating SSL context.");
     }
 
-    return ctx;
-}
-
-/* client can verify certifate of server with CA certificate. */
-void ssl_ctx_config(SSL_CTX* ctx, char* ca_cert_path) {
+    /* client can verify certifate of server with CA certificate. */
     SSL_CTX_set_options(ctx, SSL_OP_ALL | SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3); // Recommended to avoid SSLv2 & SSLv3
     SSL_CTX_set_verify_depth(ctx, 1);
     if (!SSL_CTX_load_verify_locations(ctx, ca_cert_path, NULL)) {
         ERR_print_errors_fp(stderr);
         error_handle("Fail to load certificate.");
     }
+
+    return ctx;
 }
 
-SSL* create_ssl(SSL_CTX* ctx, int sock) {
+SSL* create_client_ssl(SSL_CTX* ctx, int sock) {
     SSL* ssl = SSL_new(ctx);
     
     SSL_set_connect_state(ssl); // server: SSL_set_accept_state || client: SSL_set_connect_state
@@ -79,7 +75,7 @@ int do_ssl_handshake(SSL* ssl) {
     return 0;
 }
 
-/* Execution of reading socket in new thread. */
+/* Execute reading socket in new thread. */
 void *read_sock_t(void* param) {
     SSL* ssl = (SSL*) param;
     char stdin_read_buf[BUF_SIZE] = { 0, };

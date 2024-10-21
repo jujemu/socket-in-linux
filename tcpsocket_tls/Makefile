@@ -1,12 +1,12 @@
 CC = gcc
 
-LIBNAME = libsocket_tls.so
-SRC = src/server_tls.c src/server_socket.c src/client_tls.c src/client_socket.c src/error_handler.c
+LIBNAME = libtcpsocket_tls.so
+SRC =  common_tls.c server_socket.c server_tls.c client_socket.c client_tls.c error_handler.c
 OBJ = $(SRC:.c=.o)
 
 CFLAGS = -c -fPIC
 LDFLAGS = -shared -o
-HDIR = include/
+HDIR = .
 IHDIR = -I$(HDIR)
 
 $(LIBNAME) : $(OBJ)

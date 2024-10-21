@@ -1,11 +1,11 @@
 #!/bin/bash
-
 mkdir -p build
 
 # shared library
-cd Library/
+cd tcpsocket_tls
 make
-cp libsocket_tls.so ../build/
+mv libtcpsocket_tls.so ../Echo/_build
+cp tcpsocket_tls.h ../Echo/_build
 make clean
 cd ..
 

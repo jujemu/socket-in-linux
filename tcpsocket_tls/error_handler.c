@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "config.h"
+#define ERR_BUF_SIZE 256
 
 void error_handle(char* msg) {
     printf("%s\n\n", msg);
@@ -10,7 +10,7 @@ void error_handle(char* msg) {
 }
 
 void show_last_error_msg() {
-    char msg_buf[BUF_SIZE] = { 0, };
+    char msg_buf[ERR_BUF_SIZE] = { 0, };
     unsigned long err_num = ERR_get_error();
 
     printf("------ ERROR ------\n");
