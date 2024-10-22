@@ -9,11 +9,11 @@ apt update && apt install libssl-dev build-essential
 ## How to run
 
 ```sh
-source ./build.sh
+source build.sh
 
 # server
-./build/server_app [PORT] # Ex> ./build/server_app 443
+echo/build/server_app
 
 # client
-./build/client_app [IP address] [PORT] # Ex> ./build/client_app 127.0.0.1 443
+echo/build/client_app
 ```
