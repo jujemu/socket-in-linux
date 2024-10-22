@@ -6,7 +6,9 @@ SRC = server.c
 HDIR = ../include/
 LIBNAME = tcpsocket_tls
 LIBDIR = ../build
-LDFLAGS = -lssl -lcrypto -l$(LIBNAME) -L$(LIBDIR) -I$(HDIR) -Wall -Wextra -Werror -Wshadow -Wuninitialized -Wpedantic
+
+LINK = -lssl -lcrypto -l$(LIBNAME) -L$(LIBDIR) -Wl,-rpath=.
+LDFLAGS = $(LINK) -I$(HDIR) -Wall -Wextra -Wshadow -Wuninitialized -Wpedantic
 
 $(EXECUTABLE) : $(SRC)
 	$(CC) -o $@ $^ $(LDFLAGS)
