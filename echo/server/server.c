@@ -57,12 +57,22 @@ int remove_client(int cli_fd, int top)
     return 1;
 }
 
+int find_index_sock(int sock, int top) {
+    for (int i = 0; i <= top; i++) {
+        if (tls_sockets[i].fd == sock) {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
 int echo(fd_set* read_fd, int curr_sock, char* sock_read_buf) 
 {
     char sock_write_buf[BUF_SIZE];
     ssize_t bytes_sended;
     
-    int index = find_index_sock(tls_sockets, curr_sock, tls_sockets_top);
+    int index = find_index_sock(curr_sock, tls_sockets_top);
 
     /* read socket and decrypt */
     memset(sock_read_buf, 0, BUF_SIZE);
@@ -89,7 +99,7 @@ int echo(fd_set* read_fd, int curr_sock, char* sock_read_buf)
     attach_prefix(sock_write_buf, sock_read_buf, curr_sock);
     for (int fd = 3; fd <= fd_max; fd++) {
         if (FD_ISSET(fd, read_fd) && fd != curr_sock && fd != serv_sock) {
-            index = find_index_sock(tls_sockets, fd, tls_sockets_top);
+            index = find_index_sock(fd, tls_sockets_top);
             if (index < 0) {
                 error_handle("Cannot find client socket.");
             }
@@ -147,10 +157,9 @@ int main(void)
             int curr_sock = i;
             if (FD_ISSET(curr_sock, &tmp_read_fd)) {
                 /* connect with client */
-                if (curr_sock == serv_sock) 
-                {
+                if (curr_sock == serv_sock) {
                     int client_sock = accept_and_create_client_sock(serv_sock);
-                    SSL* ssl = create_server_ssl(ctx, &tls_sockets[tls_sockets_top], client_sock);
+                    create_server_ssl(ctx, &tls_sockets[tls_sockets_top], client_sock);
                     tls_sockets_top++;
                     FD_SET(client_sock, &read_fd);
 

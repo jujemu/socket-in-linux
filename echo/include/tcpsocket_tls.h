@@ -29,4 +29,3 @@ int accept_and_create_client_sock(int serv_sock);
 /* server tls */
 SSL_CTX* create_server_ssl_ctx(char* certificate_path, char* key_path);
 SSL* create_server_ssl(SSL_CTX* ctx, tls_socket* tls_sockets, int client_sock);
-int find_index_sock(tls_socket* tls_sockets, int sock, int top);

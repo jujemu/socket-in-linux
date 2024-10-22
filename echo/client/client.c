@@ -87,7 +87,6 @@ int main(void) {
     SSL_CTX* ctx = NULL;
     SSL* ssl = NULL;
     char stdin_read_buf[BUF_SIZE] = { 0, };
-    char sock_read_buf[BUF_SIZE] = { 0, };
     void* thread_rtn = NULL;
 
     int port = 443;

@@ -5,15 +5,14 @@ SRC =  common_tls.c server_socket.c server_tls.c client_socket.c client_tls.c er
 OBJ = $(SRC:.c=.o)
 
 CFLAGS = -c -fPIC
-LDFLAGS = -shared -o
 HDIR = .
-IHDIR = -I$(HDIR)
+LDFLAGS = -shared -I$(HDIR) -Wall -Wextra -Werror -Wshadow -Wuninitialized -Wpedantic -o
 
 $(LIBNAME) : $(OBJ)
 	$(CC) $(LDFLAGS) $@ $(OBJ)
 
 %.o : %.c
-	$(CC) $(CFLAGS) $< -o $@ $(IHDIR)
+	$(CC) $(CFLAGS) $< -o $@
 
 clean :
 	rm -f $(OBJ)
