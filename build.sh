@@ -5,7 +5,6 @@ mkdir -p echo/build
 cd tcpsocket_tls
 make
 
-export LD_LIBRARY_PATH=.:$LD_LIBRARY_PATH
 rm -f ../echo/include/tcpsocket_tls.h ../echo/build/libtcpsocket_tls.so
 mv libtcpsocket_tls.so ../echo/build/
 cp tcpsocket_tls.h ../echo/include/
