@@ -3,17 +3,20 @@ Echo server and client with TLS.
 
 ## Prerequisite
 ```
-apt update && apt install libssl-dev build-essential
+apt update && apt install libssl-dev build-essential cmake
 ```
 
 ## How to run
 
 ```sh
-source build.sh
+cmake -H. -Becho/build -G "Unix Makefiles"
+cmake --build echo/build
 
 # server
-echo/build/server_app
+cd echo/build
+./server_app
 
 # client
-echo/build/client_app
+cd echo/build
+./client_app
 ```
