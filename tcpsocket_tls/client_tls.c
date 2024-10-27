@@ -80,19 +80,16 @@ void *read_sock_t(void* param) {
     SSL* ssl = (SSL*) param;
     char stdin_read_buf[BUF_SIZE] = { 0, };
     ssize_t bytes_received = 0;
-    enum thread_error_code *ret_val = malloc(sizeof(enum thread_error_code));
     
     while (1) {
         bytes_received = SSL_read(ssl, stdin_read_buf, BUF_SIZE);
         
         if (bytes_received == 0) {
-            *ret_val = SERVER_CLOSED;
-            return (void*) ret_val;
+            return (void*) SERVER_CLOSED;
         }
 
         if (bytes_received < 0) {
-            *ret_val = FAIL_TO_READ;
-            return (void*) ret_val;
+            return (void*) FAIL_TO_READ;
         }
 
         printf("%s\n", stdin_read_buf);
