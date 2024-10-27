@@ -9,14 +9,14 @@ apt update && apt install libssl-dev build-essential cmake
 ## How to run
 
 ```sh
-cmake -H. -Becho/build -G "Unix Makefiles"
-cmake --build echo/build
+cmake -H. -Bbuild -G "Unix Makefiles"
+cmake --build build
 
 # server
-cd echo/build
+cd build
 ./server_app
 
 # client
-cd echo/build
+cd build
 ./client_app
 ```

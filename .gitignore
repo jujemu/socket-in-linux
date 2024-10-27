@@ -4,4 +4,4 @@ server_app
 .vscode
 *.so
 
-echo/build/*
+build/*
